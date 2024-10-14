@@ -138,6 +138,9 @@ namespace DTAClient.DXGUI.Generic
         private XNAClientButton btnCredits;
         private XNAClientButton btnExtras;
 
+        //Background
+        private XNAVideoBox videoBackGround;
+
         /// <summary>
         /// Initializes the main menu's controls.
         /// </summary>
@@ -247,6 +250,10 @@ namespace DTAClient.DXGUI.Generic
             lblUpdateStatus.LeftClick += LblUpdateStatus_LeftClick;
             lblUpdateStatus.ClientRectangle = new Rectangle(0, 0, UIDesignConstants.BUTTON_WIDTH_160, 20);
 
+            videoBackGround = new XNAVideoBox(WindowManager);
+            videoBackGround.Name = nameof(videoBackGround);
+            
+            AddChild(videoBackGround);
             AddChild(btnNewCampaign);
             AddChild(btnLoadGame);
             AddChild(btnSkirmish);

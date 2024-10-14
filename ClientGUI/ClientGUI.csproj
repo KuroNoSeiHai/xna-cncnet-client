@@ -3,6 +3,11 @@
     <Description>CnCNet Client UI Library</Description>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" />
+    <PackageReference Include="OpenCvSharp4.Windows" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ClientCore\ClientCore.csproj" />
   </ItemGroup>
 </Project>

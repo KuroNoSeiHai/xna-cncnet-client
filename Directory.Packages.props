@@ -14,6 +14,9 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(DotnetLibrariesVersion)" />
+    <PackageVersion Include="OpenCvSharp4" Version="4.10.0.20240616" />
+    <PackageVersion Include="OpenCvSharp4.runtime.win" Version="4.10.0.20240616" />
+    <PackageVersion Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />
     <PackageVersion Include="OpenMcdf" Version="2.2.1.12" />
     <PackageVersion Include="Rampastring.Tools" Version="2.0.6" />
     <PackageVersion Include="Rampastring.XNAUI.WindowsDX" Version="$(RampastringXNAUIVersion)" />
@@ -51,7 +54,6 @@
     <!-- and -p:Engine=WindowsDX -f net48 -->
     <PackageReference Include="NETStandard.Library" />
     <PackageVersion Include="NETStandard.Library" Version="2.0.3" />
-
     <PackageReference Include="System.IO.FileSystem" />
     <PackageVersion Include="System.IO.FileSystem" Version="4.3.0" />
   </ItemGroup>

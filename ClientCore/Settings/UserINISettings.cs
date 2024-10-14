@@ -66,6 +66,7 @@ namespace ClientCore
             BorderlessWindowedClient = new BoolSetting(iniFile, VIDEO, "BorderlessWindowedClient", true);
             ClientFPS = new IntSetting(iniFile, VIDEO, "ClientFPS", 60);
             DisplayToggleableExtraTextures = new BoolSetting(iniFile, VIDEO, "DisplayToggleableExtraTextures", true);
+            ClientAnimationBackground = new BoolSetting(iniFile, VIDEO, "ClientAnimationBackground", true);
 
             ScoreVolume = new DoubleSetting(iniFile, AUDIO, "ScoreVolume", 0.7);
             SoundVolume = new DoubleSetting(iniFile, AUDIO, "SoundVolume", 0.7);
@@ -153,6 +154,7 @@ namespace ClientCore
         public BoolSetting BorderlessWindowedClient { get; private set; }
         public IntSetting ClientFPS { get; private set; }
         public BoolSetting DisplayToggleableExtraTextures { get; private set; }
+        public BoolSetting ClientAnimationBackground { get; private set; }
 
         /*********/
         /* AUDIO */
