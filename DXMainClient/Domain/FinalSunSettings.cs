@@ -30,9 +30,7 @@ namespace DTAClient.Domain
                     iniFile.Encoding = EncodingExt.ANSI;
                     iniFile.Parse();
 
-                    iniFile.SetStringValue("FinalSun", "Language", "English");
-                    iniFile.SetStringValue("FinalSun", "FileSearchLikeTS", "yes");
-                    iniFile.SetStringValue("TS", "Exe", SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
+                    iniFile.SetStringValue("General", "GameDirectory", SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
                     iniFile.WriteIniFile();
 
                     return;
@@ -45,18 +43,9 @@ namespace DTAClient.Domain
 
                 using var sw = new StreamWriter(finalSunIniFile.FullName, false, EncodingExt.ANSI);
 
-                sw.WriteLine("[FinalSun]");
-                sw.WriteLine("Language=English");
-                sw.WriteLine("FileSearchLikeTS=yes");
+                sw.WriteLine("[General]");
+                sw.WriteLine("GameDirectory=" + SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
                 sw.WriteLine("");
-                sw.WriteLine("[TS]");
-                sw.WriteLine("Exe=" + SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
-                sw.WriteLine("");
-                sw.WriteLine("[UserInterface]");
-                sw.WriteLine("EasyView=0");
-                sw.WriteLine("NoSounds=0");
-                sw.WriteLine("DisableAutoLat=0");
-                sw.WriteLine("ShowBuildingCells=0");
             }
             catch
             {
