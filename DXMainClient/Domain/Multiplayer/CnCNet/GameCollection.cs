@@ -42,6 +42,7 @@ namespace DTAClient.Domain.Multiplayer.CnCNet
             using Stream d2kIconStream = assembly.GetManifestResourceStream("DTAClient.Icons.d2kicon.png");
             using Stream ssIconStream = assembly.GetManifestResourceStream("DTAClient.Icons.ssicon.png");
             using Stream unknownIconStream = assembly.GetManifestResourceStream("DTAClient.Icons.unknownicon.png");
+            using Stream ecIconStream = assembly.GetManifestResourceStream("DTAClient.Icons.ecicon.png");
             using var dtaIcon = Image.Load(dtaIconStream);
             using var tiIcon = Image.Load(tiIconStream);
             using var tsIcon = Image.Load(tsIconStream);
@@ -56,143 +57,20 @@ namespace DTAClient.Domain.Multiplayer.CnCNet
             using var d2kIcon = Image.Load(d2kIconStream);
             using var ssIcon = Image.Load(ssIconStream);
             using var unknownIcon = Image.Load(unknownIconStream);
+            using var ecIcon = Image.Load(ecIconStream);
 
             // Default supported games.
             CnCNetGame[] defaultGames =
             {
                 new()
                 {
-                    ChatChannel = "#cncnet-dta",
-                    ClientExecutableName = "DTA.exe",
-                    GameBroadcastChannel = "#cncnet-dta-games",
-                    InternalName = "dta",
-                    RegistryInstallPath = "HKCU\\Software\\TheDawnOfTheTiberiumAge",
-                    UIName = "Dawn of the Tiberium Age".L10N("Client:ClientCore:DawnoftheTiberiumAge"),
-                    Texture = AssetLoader.TextureFromImage(dtaIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-ti",
-                    ClientExecutableName = "TI_Launcher.exe",
-                    GameBroadcastChannel = "#cncnet-ti-games",
-                    InternalName = "ti",
-                    RegistryInstallPath = "HKCU\\Software\\TwistedInsurrection",
-                    UIName = "Twisted Insurrection".L10N("Client:ClientCore:TwistedInsurrection"),
-                    Texture = AssetLoader.TextureFromImage(tiIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-mo",
-                    ClientExecutableName = "MentalOmegaClient.exe",
-                    GameBroadcastChannel = "#cncnet-mo-games",
-                    InternalName = "mo",
-                    RegistryInstallPath = "HKCU\\Software\\MentalOmega",
-                    UIName = "Mental Omega".L10N("Client:ClientCore:MentalOmega"),
-                    Texture = AssetLoader.TextureFromImage(moIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#redres-lobby",
-                    ClientExecutableName = "RRLauncher.exe",
-                    GameBroadcastChannel = "#redres-games",
-                    InternalName = "rr",
-                    RegistryInstallPath = "HKLM\\Software\\RedResurrection",
-                    UIName = "YR Red-Resurrection".L10N("Client:ClientCore:YRRedResurrection"),
-                    Texture = AssetLoader.TextureFromImage(rrIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#riseoftheeast",
-                    ClientExecutableName = "RELauncher.exe",
-                    GameBroadcastChannel = "#rote-games",
-                    InternalName = "re",
-                    RegistryInstallPath = "HKLM\\Software\\RiseoftheEast",
-                    UIName = "Rise of the East".L10N("Client:ClientCore:RiseoftheEast"),
-                    Texture = AssetLoader.TextureFromImage(reIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncreloaded",
-                    ClientExecutableName = "CnCReloadedClient.exe",
-                    GameBroadcastChannel = "#cncreloaded-games",
-                    InternalName = "cncr",
-                    RegistryInstallPath = "HKCU\\Software\\CnCReloaded",
-                    UIName = "C&C: Reloaded".L10N("Client:ClientCore:CnCReloaded"),
-                    Texture = AssetLoader.TextureFromImage(cncrIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-td",
-                    ClientExecutableName = "TiberianDawn.exe",
-                    GameBroadcastChannel = "#cncnet-td-games",
-                    InternalName = "td",
-                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Tiberian Dawn",
-                    UIName = "Tiberian Dawn".L10N("Client:ClientCore:TiberianDawn"),
-                    Texture = AssetLoader.TextureFromImage(tdIcon),
-                    Supported = false
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-ra",
-                    ClientExecutableName = "RedAlert.exe",
-                    GameBroadcastChannel = "#cncnet-ra-games",
-                    InternalName = "ra",
-                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Red Alert",
-                    UIName = "Red Alert".L10N("Client:ClientCore:RedAlert"),
-                    Texture = AssetLoader.TextureFromImage(raIcon),
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-d2k",
-                    ClientExecutableName = "Dune2000.exe",
-                    GameBroadcastChannel = "#cncnet-d2k-games",
-                    InternalName = "d2k",
-                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Dune 2000",
-                    UIName = "Dune 2000".L10N("Client:ClientCore:Dune2000"),
-                    Texture = AssetLoader.TextureFromImage(d2kIcon),
-                    Supported = false
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-ts",
-                    ClientExecutableName = "TiberianSun.exe",
-                    GameBroadcastChannel = "#cncnet-ts-games",
-                    InternalName = "ts",
-                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Tiberian Sun",
-                    UIName = "Tiberian Sun".L10N("Client:ClientCore:TiberianSun"),
-                    Texture = AssetLoader.TextureFromImage(tsIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-yr",
-                    ClientExecutableName = "CnCNetClientYR.exe",
-                    GameBroadcastChannel = "#cncnet-yr-games",
-                    InternalName = "yr",
-                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Yuri's Revenge",
-                    UIName = "Yuri's Revenge".L10N("Client:ClientCore:YurisRevenge"),
-                    Texture = AssetLoader.TextureFromImage(yrIcon)
-                },
-
-                new()
-                {
-                    ChatChannel = "#cncnet-ss",
-                    ClientExecutableName = "SoleSurvivor.exe",
-                    GameBroadcastChannel = "#cncnet-ss-games",
-                    InternalName = "ss",
-                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Sole Survivor",
-                    UIName = "Sole Survivor".L10N("Client:ClientCore:SoleSurvivor"),
-                    Texture = AssetLoader.TextureFromImage(ssIcon),
-                    Supported = false
+                   ChatChannel = "#cncnet-ec",
+                    ClientExecutableName = "ECLauncher.exe",
+                    GameBroadcastChannel = "#cncnet-ec-games",
+                    InternalName = "ec",
+                    RegistryInstallPath = "HKLM\\Software\\Westwood\\Earth Crisis",
+                    UIName = "Earth Crisis".L10N("Client:Core:EarthCrisis"),
+                    Texture = AssetLoader.TextureFromImage(ecIcon)
                 }
             };
 

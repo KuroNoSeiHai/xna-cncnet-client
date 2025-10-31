@@ -27,12 +27,11 @@ namespace DTAClient.Domain
 
                     IniFile iniFile = new IniFile();
                     iniFile.FileName = finalSunIniFile.FullName;
-                    iniFile.Encoding = EncodingExt.ANSI;
+                    iniFile.Encoding = EncodingExt.UTF8NoBOM;
                     iniFile.Parse();
 
-                    iniFile.SetStringValue("FinalSun", "Language", "English");
-                    iniFile.SetStringValue("FinalSun", "FileSearchLikeTS", "yes");
-                    iniFile.SetStringValue("TS", "Exe", SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
+                    iniFile.SetStringValue("General", "Language", "Chinese");
+                    iniFile.SetStringValue("General", "GameDirectory", SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
                     iniFile.WriteIniFile();
 
                     return;
@@ -45,18 +44,27 @@ namespace DTAClient.Domain
 
                 using var sw = new StreamWriter(finalSunIniFile.FullName, false, EncodingExt.ANSI);
 
-                sw.WriteLine("[FinalSun]");
-                sw.WriteLine("Language=English");
-                sw.WriteLine("FileSearchLikeTS=yes");
+                sw.WriteLine("[General]");
+                sw.WriteLine("Language=Chinese");
+                sw.WriteLine("Theme=Default");
+                sw.WriteLine("UseBoldFont=false");
+                sw.WriteLine("SmartScriptActionCloning=true");
+                sw.WriteLine("GameDirectory=" + SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
+                sw.WriteLine("LastScenarioPath=");
+                sw.WriteLine("TextEditorPath=");
                 sw.WriteLine("");
-                sw.WriteLine("[TS]");
-                sw.WriteLine("Exe=" + SafePath.CombineDirectoryPath(ProgramConstants.GamePath));
+                sw.WriteLine("[Display]");
+                sw.WriteLine("TargetFPS=240");
+                sw.WriteLine("GraphicsLevel=1");
+                sw.WriteLine("RenderScale=1");
+                sw.WriteLine("Borderless=false");
+                sw.WriteLine("FullscreenWindowed=false");
                 sw.WriteLine("");
-                sw.WriteLine("[UserInterface]");
-                sw.WriteLine("EasyView=0");
-                sw.WriteLine("NoSounds=0");
-                sw.WriteLine("DisableAutoLat=0");
-                sw.WriteLine("ShowBuildingCells=0");
+                sw.WriteLine("[MapView]");
+                sw.WriteLine("ScrollRate=15");
+                sw.WriteLine("");
+                sw.WriteLine("[RecentFiles]");
+                sw.WriteLine("");
             }
             catch
             {

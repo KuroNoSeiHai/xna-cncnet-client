@@ -106,6 +106,7 @@ namespace ClientCore
             IntegerScaledClient = new BoolSetting(iniFile, VIDEO, "IntegerScaledClient", ClientConfiguration.Instance.UserDefault_IntegerScaledClient);
             ClientFPS = new IntSetting(iniFile, VIDEO, "ClientFPS", 60);
             DisplayToggleableExtraTextures = new BoolSetting(iniFile, VIDEO, "DisplayToggleableExtraTextures", true);
+            ClientAnimationBackground = new BoolSetting(iniFile, VIDEO, "ClientAnimationBackground", true);
 
             ScoreVolume = new DoubleSetting(iniFile, AUDIO, "ScoreVolume", 0.7);
             SoundVolume = new DoubleSetting(iniFile, AUDIO, "SoundVolume", 0.7);
@@ -196,6 +197,7 @@ namespace ClientCore
         public BoolSetting IntegerScaledClient { get; private set; }
         public IntSetting ClientFPS { get; private set; }
         public BoolSetting DisplayToggleableExtraTextures { get; private set; }
+        public BoolSetting ClientAnimationBackground { get; private set; }
 
         /*********/
         /* AUDIO */

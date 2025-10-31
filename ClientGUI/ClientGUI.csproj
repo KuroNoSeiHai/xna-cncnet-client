@@ -6,6 +6,8 @@
     <ProjectReference Include="..\ClientCore\ClientCore.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" />
     <PackageReference Include="Rampastring.XNAUI.$(Engine)" Condition="'!$(Configuration.Contains(Debug))'" />
     <PackageReference Include="Rampastring.XNAUI.$(Engine).Debug" Condition="'$(Configuration.Contains(Debug))'" />
   </ItemGroup>

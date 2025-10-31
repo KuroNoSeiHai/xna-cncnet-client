@@ -44,6 +44,7 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
         private XNAClientCheckBox chkIntegerScaledClient;
         private XNAClientDropDown ddClientTheme;
         private XNAClientDropDown ddTranslation;
+        private XNAClientCheckBox chkAnimatedTheme;
 
         private List<DirectDrawWrapper> renderers;
 
@@ -264,11 +265,19 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
                 ddClientTheme.AddItem(new XNADropDownItem { Text = displayName, Tag = themeName });
             }
 
+            chkAnimatedTheme = new XNAClientCheckBox(WindowManager);
+            chkAnimatedTheme.Name = "chkAnimatedTheme";
+            chkAnimatedTheme.ClientRectangle = new Rectangle(
+                lblClientTheme.X,
+                ddClientTheme.Bottom + 16, 0, 0);
+            chkAnimatedTheme.Text = "Animated Theme(Only Default Theme)".L10N("Client:DTAConfig:AnimatedTheme");
+            chkAnimatedTheme.Checked = true;
+
             var lblTranslation = new XNALabel(WindowManager);
             lblTranslation.Name = nameof(lblTranslation);
             lblTranslation.ClientRectangle = new Rectangle(
                 lblClientTheme.X,
-                ddClientTheme.Bottom + 16, 0, 0);
+                ddClientTheme.Bottom + 56, 0, 0);
             lblTranslation.Text = "Language:".L10N("Client:DTAConfig:Language");
 
             ddTranslation = new XNAClientDropDown(WindowManager);
@@ -346,6 +355,7 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
             AddChild(chkIntegerScaledClient);
             AddChild(lblClientTheme);
             AddChild(ddClientTheme);
+            AddChild(chkAnimatedTheme);
             AddChild(lblTranslation);
             AddChild(ddTranslation);
             AddChild(lblClientResolution);
@@ -684,6 +694,8 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
 
             chkBorderlessClient.Checked = UserINISettings.Instance.BorderlessWindowedClient;
 
+            chkAnimatedTheme.Checked = UserINISettings.Instance.ClientAnimationBackground;
+
             int selectedThemeIndex = ddClientTheme.Items.FindIndex(
                 ddi => (string)ddi.Tag == UserINISettings.Instance.ClientTheme);
             ddClientTheme.SelectedIndex = selectedThemeIndex > -1 ? selectedThemeIndex : 0;
@@ -794,6 +806,11 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
                 restartRequired = true;
 
             IniSettings.IntegerScaledClient.Value = chkIntegerScaledClient.Checked;
+
+            if (IniSettings.ClientAnimationBackground.Value != chkAnimatedTheme.Checked)
+                restartRequired = true;
+
+            IniSettings.ClientAnimationBackground.Value = chkAnimatedTheme.Checked;
 
             restartRequired = restartRequired || IniSettings.ClientTheme != (string)ddClientTheme.SelectedItem.Tag;
 
