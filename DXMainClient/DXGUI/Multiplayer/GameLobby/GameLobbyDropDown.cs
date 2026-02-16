@@ -1,5 +1,7 @@
 using DTAClient.DXGUI.Generic;
 
+using Microsoft.Xna.Framework.Graphics;
+
 using Rampastring.Tools;
 using Rampastring.XNAUI;
 using Rampastring.XNAUI.XNAControls;
@@ -9,7 +11,7 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby;
 public class GameLobbyDropDown : GameSessionDropDown
 {
     public GameLobbyDropDown(WindowManager windowManager) : base(windowManager) { }
-    
+
     public int HostSelectedIndex { get; set; }
 
     public int UserSelectedIndex { get; set; }
@@ -35,6 +37,20 @@ public class GameLobbyDropDown : GameSessionDropDown
         }
 
         base.Initialize();
+
+        // Set textures on dropdown items if Icons are specified
+        if (ShowIconInGameLobby && Icons != null && Icons.Length > 0)
+        {
+            for (int i = 0; i < Items.Count && i < Icons.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(Icons[i]))
+                {
+                    Texture2D icon = AssetLoader.LoadTexture(Icons[i]);
+                    if (icon != null)
+                        Items[i].Texture = icon;
+                }
+            }
+        }
     }
 
     protected override void ParseControlINIAttribute(IniFile iniFile, string key, string value)
@@ -49,13 +65,13 @@ public class GameLobbyDropDown : GameSessionDropDown
 
         base.ParseControlINIAttribute(iniFile, key, value);
     }
-    
+
     public override void OnLeftClick(InputEventArgs inputEventArgs)
     {
         // FIXME there's a discrepancy with how base XNAUI handles this
         // it doesn't set handled if changing the setting is not allowed
         inputEventArgs.Handled = true;
-            
+
         if (!AllowDropDown)
             return;
 
