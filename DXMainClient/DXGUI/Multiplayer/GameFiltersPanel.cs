@@ -189,6 +189,12 @@ namespace DTAClient.DXGUI.Multiplayer
             if (gameLobby == null)
                 return;
 
+            var broadcastableCheckboxes = gameLobby.CheckBoxes.Where(cb => cb.BroadcastToLobby && cb.ShowInFilters).ToList();
+            var broadcastableDropdowns = gameLobby.DropDowns.Where(dd => dd.BroadcastToLobby && dd.ShowInFilters).ToList();
+
+            if (broadcastableCheckboxes.Count == 0 && broadcastableDropdowns.Count == 0)
+                return;
+
             int currentY = ddMaxPlayerCount.Y + UIDesignConstants.BUTTON_HEIGHT + GAP;
             const int iconLabelSpacing = 6;
             const int itemVerticalSpacing = 4;
@@ -206,7 +212,6 @@ namespace DTAClient.DXGUI.Multiplayer
             int maxItemHeight = 0;
 
             // Create filters for broadcastable checkboxes
-            var broadcastableCheckboxes = gameLobby.CheckBoxes.Where(cb => cb.BroadcastToLobby && cb.ShowInFilters).ToList();
             foreach (var checkbox in broadcastableCheckboxes)
             {
                 var filterControl = new GameOptionFilterControl
@@ -290,7 +295,6 @@ namespace DTAClient.DXGUI.Multiplayer
             }
 
             // Create filters for broadcastable dropdowns
-            var broadcastableDropdowns = gameLobby.DropDowns.Where(dd => dd.BroadcastToLobby && dd.ShowInFilters).ToList();
             foreach (var lobbyDropdown in broadcastableDropdowns)
             {
                 var filterControl = new GameOptionFilterControl
@@ -300,9 +304,7 @@ namespace DTAClient.DXGUI.Multiplayer
                 };
 
                 // For dropdowns with multiple icons, show the first one initially
-                Texture2D icon = null;
-                if (lobbyDropdown.Icons != null && lobbyDropdown.Icons.Length > 0 && !string.IsNullOrEmpty(lobbyDropdown.Icons[0]))
-                    icon = AssetLoader.LoadTexture(lobbyDropdown.Icons[0]);
+                Texture2D icon = lobbyDropdown.Items.Count > 0 ? lobbyDropdown.Items[0].Texture : null;
 
                 int iconWidth = icon?.Width ?? 0;
                 int iconHeight = icon?.Height ?? 0;
@@ -346,12 +348,7 @@ namespace DTAClient.DXGUI.Multiplayer
                 for (int i = 0; i < lobbyDropdown.Items.Count; i++)
                 {
                     var item = lobbyDropdown.Items[i];
-                    Texture2D itemTexture = null;
-
-                    if (lobbyDropdown.Icons != null && i < lobbyDropdown.Icons.Length && !string.IsNullOrEmpty(lobbyDropdown.Icons[i]))
-                        itemTexture = AssetLoader.LoadTexture(lobbyDropdown.Icons[i]);
-
-                    dropdown.AddItem(new XNADropDownItem { Text = item.Text, Tag = item.Tag, Texture = itemTexture });
+                    dropdown.AddItem(new XNADropDownItem { Text = item.Text, Tag = item.Tag, Texture = item.Texture });
                 }
 
                 dropdown.SelectedIndex = 0;
