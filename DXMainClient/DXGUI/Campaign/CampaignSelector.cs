@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ using ClientUpdater;
 using DTAClient.Domain;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 using Rampastring.Tools;
 using Rampastring.XNAUI;
@@ -49,6 +51,13 @@ namespace DTAClient.DXGUI.Campaign
         private CampaignTagSelector campaignTagSelector;
 
         private List<Mission> selectedMissions = [];
+
+        private XNAPanel pnlMissionPreview;
+        private bool pnlMissionPreviewBackgroundTextureNeedsDispose = false;
+        private string missionPreviewFolder => SafePath.CombineDirectoryPath(ProgramConstants.GetBaseResourcePath(), "Mission Previews");
+        private string defaultMissionPreviewPath => SafePath.CombineFilePath(missionPreviewFolder, "Default.png");
+        private bool pnlMissionPreviewEnabled => File.Exists(defaultMissionPreviewPath);
+
         private XNAListBox lbCampaignList;
         private XNAClientButton btnLaunch;
         private XNAClientButton btnCancel;
@@ -140,10 +149,10 @@ namespace DTAClient.DXGUI.Campaign
             tbMissionDescription.ClientRectangle = new Rectangle(
                 lblMissionDescriptionHeader.X,
                 lblMissionDescriptionHeader.Bottom + 6,
-                Width - 24 - lbCampaignList.Right, 430);
+                Width - 24 - lbCampaignList.Right,
+                pnlMissionPreviewEnabled ? 430 - 200 - 12 : 430);
             tbMissionDescription.PanelBackgroundDrawMode = PanelBackgroundImageDrawMode.STRETCHED;
             tbMissionDescription.Alpha = 1.0f;
-
             tbMissionDescription.BackgroundTexture = AssetLoader.CreateTexture(AssetLoader.GetColorFromString(ClientConfiguration.Instance.AltUIBackgroundColor),
                 tbMissionDescription.Width, tbMissionDescription.Height);
 
@@ -206,6 +215,26 @@ namespace DTAClient.DXGUI.Campaign
             btnCancel.Text = "Cancel".L10N("Client:Main:ButtonCancel");
             btnCancel.LeftClick += BtnCancel_LeftClick;
 
+            if (pnlMissionPreviewEnabled)
+            {
+                pnlMissionPreview = new XNAPanel(WindowManager);
+                pnlMissionPreview.Name = nameof(pnlMissionPreview);
+                pnlMissionPreview.ClientRectangle = new Rectangle(
+                    tbMissionDescription.X,
+                    tbMissionDescription.Bottom + 12,
+                    tbMissionDescription.Width,
+                    200);
+
+                pnlMissionPreview.PanelBackgroundDrawMode = PanelBackgroundImageDrawMode.STRETCHED;
+
+                pnlMissionPreview.BackgroundTexture = CreateLetterboxedTexture(AssetLoader.LoadTextureUncached(defaultMissionPreviewPath), pnlMissionPreview.Width, pnlMissionPreview.Height);
+                pnlMissionPreviewBackgroundTextureNeedsDispose = true;
+            }
+            else
+            {
+                pnlMissionPreview = null;
+            }
+
             AddChild(lblSelectCampaign);
             AddChild(lblMissionDescriptionHeader);
             AddChild(lbCampaignList);
@@ -217,6 +246,9 @@ namespace DTAClient.DXGUI.Campaign
             AddChild(lblEasy);
             AddChild(lblNormal);
             AddChild(lblHard);
+
+            if (pnlMissionPreview != null)
+                AddChild(pnlMissionPreview);
 
             if (ClientConfiguration.Instance.CampaignTagSelectorEnabled)
             {
@@ -264,11 +296,16 @@ namespace DTAClient.DXGUI.Campaign
             if (lbCampaignList.SelectedIndex == -1)
             {
                 tbMissionDescription.Text = string.Empty;
+
+                UpdateMissionPreview(string.Empty);
+
                 btnLaunch.AllowClick = false;
                 return;
             }
 
             Mission mission = selectedMissions[lbCampaignList.SelectedIndex];
+
+            UpdateMissionPreview(mission.PreviewImage);
 
             if (string.IsNullOrEmpty(mission.Scenario))
             {
@@ -286,6 +323,62 @@ namespace DTAClient.DXGUI.Campaign
             }
 
             btnLaunch.AllowClick = true;
+        }
+
+        // TODO: Modify XNAUI by adding PanelBackgroundImageDrawMode.LETTERBOXED as a new draw mode.
+        private Texture2D CreateLetterboxedTexture(Texture2D sourceTexture, int targetWidth, int targetHeight, bool disposeSourceTexture = true)
+        {
+            // Calculate aspect ratios
+            float sourceAspect = (float)sourceTexture.Width / sourceTexture.Height;
+            float targetAspect = (float)targetWidth / targetHeight;
+
+            int drawWidth, drawHeight, drawX, drawY;
+
+            // Determine scaled dimensions while maintaining aspect ratio
+            if (sourceAspect > targetAspect)
+            {
+                // Source is wider - fit to width
+                drawWidth = targetWidth;
+                drawHeight = (int)(targetWidth / sourceAspect);
+                drawX = 0;
+                drawY = (targetHeight - drawHeight) / 2;
+            }
+            else
+            {
+                // Source is taller - fit to height
+                drawHeight = targetHeight;
+                drawWidth = (int)(targetHeight * sourceAspect);
+                drawX = (targetWidth - drawWidth) / 2;
+                drawY = 0;
+            }
+
+            // Create the composite texture
+            RenderTarget2D renderTarget = new RenderTarget2D(
+                WindowManager.GraphicsDevice,
+                targetWidth,
+                targetHeight,
+                false,
+                SurfaceFormat.Color,
+                DepthFormat.None);
+
+            WindowManager.GraphicsDevice.SetRenderTarget(renderTarget);
+            WindowManager.GraphicsDevice.Clear(AssetLoader.GetColorFromString(ClientConfiguration.Instance.AltUIBackgroundColor));
+
+            var spriteBatch = new SpriteBatch(WindowManager.GraphicsDevice);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            spriteBatch.Draw(
+                sourceTexture,
+                new Rectangle(drawX, drawY, drawWidth, drawHeight),
+                Color.White);
+            spriteBatch.End();
+            spriteBatch.Dispose();
+
+            WindowManager.GraphicsDevice.SetRenderTarget(null);
+
+            if (disposeSourceTexture)
+                sourceTexture.Dispose();
+
+            return renderTarget;
         }
 
         private void BtnCancel_LeftClick(object sender, EventArgs e)
@@ -787,6 +880,38 @@ namespace DTAClient.DXGUI.Campaign
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+        }
+
+        private void UpdateMissionPreview(string missionPreviewFileName)
+        {
+            if (pnlMissionPreview == null)
+                return;
+
+            if (pnlMissionPreviewBackgroundTextureNeedsDispose)
+            {
+                Debug.Assert(pnlMissionPreview.BackgroundTexture != null, "Expected background texture to dispose, but it was null.");
+
+                pnlMissionPreview.BackgroundTexture.Dispose();
+                pnlMissionPreview.BackgroundTexture = null;
+                pnlMissionPreviewBackgroundTextureNeedsDispose = false;
+            }
+
+            string previewFilePath = null;
+            if (!string.IsNullOrEmpty(missionPreviewFileName))
+                previewFilePath = SafePath.CombineFilePath(missionPreviewFolder, missionPreviewFileName);
+
+            if (string.IsNullOrEmpty(missionPreviewFileName) || !File.Exists(previewFilePath))
+            {
+                pnlMissionPreview.BackgroundTexture = CreateLetterboxedTexture(
+                    AssetLoader.LoadTextureUncached(defaultMissionPreviewPath), pnlMissionPreview.Width, pnlMissionPreview.Height);
+            }
+            else
+            {
+                pnlMissionPreview.BackgroundTexture = CreateLetterboxedTexture(
+                    AssetLoader.LoadTextureUncached(previewFilePath), pnlMissionPreview.Width, pnlMissionPreview.Height);
+            }
+
+            pnlMissionPreviewBackgroundTextureNeedsDispose = true;
         }
     }
 }
