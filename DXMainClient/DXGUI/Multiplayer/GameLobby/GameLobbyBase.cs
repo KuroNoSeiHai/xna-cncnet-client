@@ -1119,7 +1119,7 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
                 ddPlayerStart.ClientRectangle = new Rectangle(
                     ddPlayerTeam.Right + playerOptionHorizontalMargin,
                     ddPlayerName.Y, startWidth, DROP_DOWN_HEIGHT);
-                for (int j = 1; j < 9; j++)
+                for (int j = 1; j <= MAX_PLAYER_COUNT; j++)
                     ddPlayerStart.AddItem(j.ToString());
                 ddPlayerStart.AllowDropDown = false;
                 ddPlayerStart.SelectedIndexChanged += CopyPlayerDataFromUI;
