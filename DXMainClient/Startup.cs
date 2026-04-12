@@ -128,7 +128,7 @@ namespace DTAClient
 
             ClientConfiguration.Instance.RefreshSettings();
 
-            GameClass gameClass = new GameClass();
+            using GameClass gameClass = new GameClass();
 
             if (!UserINISettings.Instance.BorderlessWindowedClient)
             {
