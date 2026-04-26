@@ -130,8 +130,9 @@ namespace DTAClient.DXGUI.Generic
             WindowManager.RemoveControl(this);
 
             Cursor.Visible = visibleSpriteCursor;
-        }
 
+            Logger.Log(FormattableString.Invariant($"Startup complete. Client is ready. Total startup time: {PreStartup.StartupElapsed.TotalSeconds:F3} s."));
+        }
 
         private TimeSpan Update_LastLogTime = TimeSpan.Zero;
         public override void Update(GameTime gameTime)
