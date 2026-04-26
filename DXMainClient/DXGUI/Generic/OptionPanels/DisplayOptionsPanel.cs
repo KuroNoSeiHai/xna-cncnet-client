@@ -82,11 +82,6 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
             {
                 var maximumIngameResolution = new ScreenResolution(ClientConfiguration.Instance.MaximumIngameWidth, ClientConfiguration.Instance.MaximumIngameHeight);
 
-#if XNA
-                if (!ScreenResolution.HiDefLimitResolution.Fits(maximumIngameResolution))
-                    maximumIngameResolution = ScreenResolution.HiDefLimitResolution;
-#endif
-
                 SortedSet<ScreenResolution> resolutions = ScreenResolution.GetFullScreenResolutions(
                     ClientConfiguration.Instance.MinimumIngameWidth, ClientConfiguration.Instance.MinimumIngameHeight,
                     maximumIngameResolution.Width, maximumIngameResolution.Height);
