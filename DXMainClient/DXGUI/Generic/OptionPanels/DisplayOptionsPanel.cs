@@ -91,6 +91,21 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
                     ClientConfiguration.Instance.MinimumIngameWidth, ClientConfiguration.Instance.MinimumIngameHeight,
                     maximumIngameResolution.Width, maximumIngameResolution.Height);
 
+                // Add custom in-game resolutions
+                var minimumIngameResolution = new ScreenResolution(ClientConfiguration.Instance.MinimumIngameWidth, ClientConfiguration.Instance.MinimumIngameHeight);
+                var customIngameResolutions = ScreenResolution.GetCustomIngameResolutions();
+                foreach (var customRes in customIngameResolutions)
+                {
+                    // Throw on too small or too large in-game resolutions
+                    if (!customRes.Fits(minimumIngameResolution))
+                        throw new ClientConfigurationException($"Custom in-game resolution {customRes} is too small. Please check 'MinimumIngameWidth' and 'MinimumIngameHeight' in 'ClientDefinitions.ini' file.");
+
+                    if (!maximumIngameResolution.Fits(customRes))
+                        throw new ClientConfigurationException($"Custom in-game resolution {customRes} is too large. Please check 'MaximumIngameWidth' and 'MaximumIngameHeight' in 'ClientDefinitions.ini' file.");
+
+                    resolutions.Add(customRes);
+                }
+
                 foreach (var res in resolutions)
                     ddIngameResolution.AddItem(res.ToString());
             }
