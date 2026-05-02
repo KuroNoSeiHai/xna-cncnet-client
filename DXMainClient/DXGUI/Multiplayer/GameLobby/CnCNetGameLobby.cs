@@ -152,6 +152,11 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
 
         private string gameFilesHash;
 
+        /// <summary>
+        /// On non-host clients: tracks map SHA1s for which the host has already communicated
+        /// their final result (either MAPOK or MAPFAIL). Used to prevent the client from
+        /// sending repeated MAPREQ messages when the host has already tried.
+        /// </summary>
         private List<string> hostUploadedMaps = new List<string>();
         private List<string> chatCommandDownloadedMaps = new List<string>();
 
@@ -270,6 +275,9 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
             this.isCustomPassword = isCustomPassword;
             this.skillLevel = skillLevel;
             this.gameRoomName = channel.UIName;
+            
+            hostUploadedMaps.Clear();
+            chatCommandDownloadedMaps.Clear();
 
             if (isHost)
             {
@@ -1904,7 +1912,9 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
 
         private void MapSharer_HandleMapDownloadFailed(SHA1EventArgs e)
         {
-            // If the host has already uploaded the map, we shouldn't request them to re-upload it
+            // If the host has already communicated their upload result (MAPOK or MAPFAIL),
+            // we should not request them to re-upload the map — it won't help.
+            // Notify the channel that this player cannot get the map.
             if (hostUploadedMaps.Contains(e.SHA1))
             {
                 AddNotice("Download of the custom map failed. The host needs to change the map or you will be unable to participate in this match.".L10N("Client:Main:DownloadCustomMapFailed"));
@@ -2013,8 +2023,6 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
         {
             Map map = e.Map;
 
-            hostUploadedMaps.Add(map.SHA1);
-
             AddNotice(string.Format("Uploading map {0} to the CnCNet map database failed.".L10N("Client:Main:UpdateMapToDBFailed"), map.Name));
             if (map == Map)
             {
@@ -2028,8 +2036,6 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
 
         private void MapSharer_HandleMapUploadComplete(MapEventArgs e)
         {
-            hostUploadedMaps.Add(e.Map.SHA1);
-
             AddNotice(string.Format("Uploading map {0} to the CnCNet map database complete.".L10N("Client:Main:UpdateMapToDBSuccess"), e.Map.Name));
             if (e.Map == Map)
             {
@@ -2044,9 +2050,15 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
         /// <param name="mapSHA1">The SHA1 of the requested map.</param>
         private void HandleMapUploadRequest(string sender, string mapSHA1)
         {
-            if (hostUploadedMaps.Contains(mapSHA1))
+            // If the map was already successfully uploaded, send a download notification
+            // immediately instead of re-uploading it.
+            if (MapSharer.IsMapUploaded(mapSHA1))
             {
-                Logger.Log("HandleMapUploadRequest: Map " + mapSHA1 + " is already uploaded!");
+                Logger.Log("HandleMapUploadRequest: Map " + mapSHA1 + " is already uploaded, sending download notification.");
+
+                if (Map != null && Map.SHA1 == mapSHA1)
+                    channel.SendCTCPMessage(MAP_SHARING_DOWNLOAD_REQUEST + " " + mapSHA1, QueuedMessageType.SYSTEM_MESSAGE, 9);
+
                 return;
             }
 
