@@ -89,8 +89,8 @@ namespace DTAClient.Domain.Multiplayer
             MaxPlayersOverride = section.GetIntValueOrNull("MaxPlayersOverride");
 
             forcedOptionsSection = section.GetStringValue("ForcedOptions", string.Empty);
-            mapCodeININame = section.GetStringValue("MapCodeININame", Name + ".ini");
-            randomizedMapCodeININames = section.GetStringValue("RandomizedMapCodeININames", string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            mapCodeININame = section.GetStringValue("MapCodeIniName", section.GetStringValue("MapCodeININame", Name + ".ini"));
+            randomizedMapCodeININames = section.GetStringValue("RandomizedMapCodeIniNames", section.GetStringValue("RandomizedMapCodeININames", string.Empty)).Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
             randomizedMapCodesCount = section.GetIntValue("RandomizedMapCodesCount", 1);
 
             DisallowedPlayerSides = section.GetListValue("DisallowedPlayerSides", ',', int.Parse);
