@@ -64,5 +64,6 @@ System.Text.Json.dll
 System.Threading.Tasks.Extensions.dll
 System.ValueTuple.dll
 TextCopy.dll
+Ude.NetStandard.dll
 x64\libHarfBuzzSharp.dll
 x86\libHarfBuzzSharp.dll
