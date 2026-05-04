@@ -443,6 +443,15 @@ namespace DTAClient.DXGUI.Multiplayer.GameLobby
                 // Use the same `- 2` to let xRatio and yRatio get calculated as 1.
                 : AssetLoader.CreateTexture(Color.Black, Width - 2, Height - 2);
 
+            if (mapPreviewTexture == null)
+            {
+                string errorMessage = "Failed to load map preview texture.";
+                if (previewTextureImage != null)
+                    errorMessage += " " + $"Map preview image: {GameModeMap.Map.PreviewPath}.";
+
+                throw new Exception(errorMessage);
+            }
+
             mapPreviewTextureNeedsDispose = true;
 
             if (!string.IsNullOrEmpty(GameModeMap.Map.Briefing))
