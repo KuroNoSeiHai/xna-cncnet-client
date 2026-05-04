@@ -68,11 +68,33 @@ Size=14
 Type=TrueType
 Path=NotoSansSC-Regular.ttf
 Size=18
+
+[FontRendering]
+; Optional section. Advanced FontStashSharp rasterization settings.
+; All properties are optional; the defaults shown here are used when the section is absent.
+; Horizontal blur kernel applied to each rasterized glyph. Default: 0 (no blur)
+KernelWidth=0
+; Vertical blur kernel applied to each rasterized glyph. Default: 0 (no blur)
+KernelHeight=0
+; Multiplier for the glyph rasterization size. Values > 1 produce sharper output when the
+; render target is upscaled at the cost of a larger texture atlas. Default: 1
+FontResolutionFactor=1
+; Width of each FontStashSharp atlas page in pixels. Default: 1024
+TextureWidth=1024
+; Height of each FontStashSharp atlas page in pixels. Default: 1024
+TextureHeight=1024
+; How rasterized glyph pixels are produced.
+; Premultiplied  - matches a premultiplied-alpha SpriteBatch (default)
+; NonPremultiplied - matches AlphaBlend SpriteBatch
+; NoAntialiasing - hard 1-bit edges for pixel-art fonts
+GlyphRenderResult=Premultiplied
 ```
 
 Font paths are relative to the directory containing `Fonts.ini`. Both `/` and `\` are accepted.
 
 ### Properties reference
+
+#### `[Font#]` properties
 
 | Property | Applies to | Description |
 |----------|-----------|-------------|
@@ -80,6 +102,25 @@ Font paths are relative to the directory containing `Fonts.ini`. Both `/` and `\
 | `Path` | Both | File path relative to `Fonts.ini` directory. For SpriteFont, the `.xnb` extension is optional — it is stripped and re-appended automatically. |
 | `Size` | TrueType | Font height in pixels. This is the em-square height. The actual rendered height of characters may be slightly smaller depending on the font's metrics. Ignored for fallback fonts. |
 | `Fallback` | TrueType | Index of another TrueType font to use when a character is not found. The chain is followed recursively. Circular references are detected and ignored. |
+
+#### `[TextShaping]`
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `Enabled` | `false` | Enable HarfBuzz text shaping. Required for complex scripts (Arabic, Hebrew, Hindi) and ZWJ emoji sequences. Disable for Latin-only or CJK-only text for better performance. |
+| `EnableBiDi` | `true` | Enable bidirectional text support for mixed LTR/RTL text. Only applies when `Enabled=true`. |
+| `CacheSize` | `100` | Number of shaped-text cache entries. Use 1000 or more for CJK or other large-script languages. Must be at least 1. |
+
+#### `[FontRendering]`
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `KernelWidth` | `0` | Horizontal blur kernel size applied by FontStashSharp when rasterizing glyphs. Must be non-negative. |
+| `KernelHeight` | `0` | Vertical blur kernel size. Must be non-negative. |
+| `FontResolutionFactor` | `1` | Multiplier for the internal glyph rasterization size. Values above `1` produce sharper output at the cost of a larger atlas. Must be non-negative. |
+| `TextureWidth` | `1024` | Width of each FontStashSharp atlas page in pixels. |
+| `TextureHeight` | `1024` | Height of each FontStashSharp atlas page in pixels. |
+| `GlyphRenderResult` | `Premultiplied` | How glyph alpha is encoded: `Premultiplied` (matches a premultiplied-alpha `SpriteBatch`), `NonPremultiplied` (matches `AlphaBlend`), or `NoAntialiasing` (hard 1-bit edges for pixel-art fonts). |
 
 ## Character fallback
 
