@@ -47,7 +47,6 @@ Rampastring.Tools.xml
 SixLabors.ImageSharp.dll
 StbImageSharp.dll
 StbTrueTypeSharp.dll
-steam_api64.dll
 System.Buffers.dll
 System.CodeDom.dll
 System.Diagnostics.DiagnosticSource.dll
@@ -66,4 +65,5 @@ System.ValueTuple.dll
 TextCopy.dll
 Ude.NetStandard.dll
 x64\libHarfBuzzSharp.dll
+x64\steam_api64.dll
 x86\libHarfBuzzSharp.dll

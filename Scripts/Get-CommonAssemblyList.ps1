@@ -40,6 +40,11 @@ $Script:Engines | ForEach-Object {
   } | ForEach-Object {
     [string]$Private:RelativePath = [System.IO.Path]::GetRelativePath($Private:PlatformFolder, $PSItem.FullName)
 
+    # Skip native DLL files in the 'runtimes' top-level folder
+    if ($Private:RelativePath.Split([System.IO.Path]::DirectorySeparatorChar)[0] -ieq 'runtimes') {
+        return
+    }
+
     if (!$Script:FileHashTable.ContainsKey($Private:RelativePath)) {
       $Script:FileHashTable[$Private:RelativePath] = [hashtable]@{}
     }
