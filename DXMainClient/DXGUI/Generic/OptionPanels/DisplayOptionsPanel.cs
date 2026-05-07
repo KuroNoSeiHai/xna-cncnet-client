@@ -48,7 +48,6 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
         private XNAClientCheckBox chkIntegerScaledClient;
         private XNAClientDropDown ddClientTheme;
         private XNAClientDropDown ddTranslation;
-        private XNAClientCheckBox chkUseLegacyFonts;
 
         private XNALabel lblCompatibilityFixes;
         private XNALabel lblGameCompatibilityFix;
@@ -285,20 +284,6 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
             foreach (var (translation, name) in Translation.GetTranslations())
                 ddTranslation.AddItem(new XNADropDownItem { Text = name, Tag = translation });
 
-            chkUseLegacyFonts = new XNAClientCheckBox(WindowManager);
-            chkUseLegacyFonts.Name = nameof(chkUseLegacyFonts);
-            chkUseLegacyFonts.ClientRectangle = new Rectangle(
-                lblClientResolution.X,
-                ddTranslation.Bottom + 16, 0, 0);
-            chkUseLegacyFonts.Text = "Use Legacy Fonts".L10N("Client:DTAConfig:UseLegacyFonts");
-            chkUseLegacyFonts.ToolTipText =
-                """
-                Use the original SpriteFont (bitmap) UI fonts instead of the
-                TrueType fonts. Some users prefer the crispness of the bitmap
-                fonts. Requires a client restart to apply.
-                """
-                .L10N("Client:DTAConfig:UseLegacyFontsToolTip");
-
             if (ClientConfiguration.Instance.ClientGameType == ClientType.TS && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 AddCompatibilityFixControls();
@@ -313,7 +298,6 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
             AddChild(ddClientTheme);
             AddChild(lblTranslation);
             AddChild(ddTranslation);
-            AddChild(chkUseLegacyFonts);
             AddChild(lblClientResolution);
             AddChild(ddClientResolution);
             AddChild(lblRenderer);
@@ -642,8 +626,6 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
             {
                 chkBackBufferInVRAM.Checked = UserINISettings.Instance.BackBufferInVRAM;
             }
-
-            chkUseLegacyFonts.Checked = UserINISettings.Instance.UseLegacyFonts;
         }
 
         public override bool Save()
@@ -691,11 +673,6 @@ namespace DTAClient.DXGUI.Generic.OptionPanels
                 restartRequired = true;
 
             IniSettings.IntegerScaledClient.Value = chkIntegerScaledClient.Checked;
-
-            if (IniSettings.UseLegacyFonts.Value != chkUseLegacyFonts.Checked)
-                restartRequired = true;
-
-            IniSettings.UseLegacyFonts.Value = chkUseLegacyFonts.Checked;
 
             restartRequired = restartRequired || IniSettings.ClientTheme != (string)ddClientTheme.SelectedItem.Tag;
 
