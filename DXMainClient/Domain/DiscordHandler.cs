@@ -16,7 +16,9 @@ namespace DTAClient.Domain
     /// </summary>
     public class DiscordHandler : IDisposable
     {
-        private const int MaxDiscordPresenceTextLength = 128;
+        // The discord text length limit is 128 bytes in UTF-8, instead of 128 characters. For now, we assume the worst case.
+        // TODO: Implement a trimming method that counts UTF-8 bytes instead of characters.
+        private const int MaxDiscordPresenceTextLength = 128 / 4;
         private DiscordRpcClient client;
 
         private RichPresence _currentPresence;
