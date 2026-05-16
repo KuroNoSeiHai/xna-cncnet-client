@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using ClientCore;
+using ClientCore.Caching;
 using ClientCore.Extensions;
 
 using Rampastring.Tools;
@@ -783,19 +784,23 @@ namespace DTAClient.Domain.Multiplayer
         public void PrefetchCachedPreviewImageFromMap(Map map)
         {
             if (map?.IsNonImmediatePreviewImageAvailable() ?? false)
-                _ = mapPreviewCacheManager.Request(map, out Image _, addToQueue: true);
+            {
+                _ = mapPreviewCacheManager.Request(map, out CacheLease<Image>? lease, addToQueue: true);
+                lease?.Dispose();
+            }
         }
 
-        public Image GetCachedPreviewImageFromMap(Map map, bool syncLoadOnCacheMiss = false)
+        public CacheLease<Image> GetCachedPreviewImageFromMap(Map map, bool syncLoadOnCacheMiss = false)
         {
             if (map?.IsImmediatePreviewImageAvailable() ?? false)
             {
-                return map.GetImmediatePreviewImage();
+                Image image = map.GetImmediatePreviewImage();
+                return CacheLease<Image>.CreateOwned(image, image.Dispose);
             }
             else if (map?.IsNonImmediatePreviewImageAvailable() ?? false)
             {
-                if (mapPreviewCacheManager.Request(map, out Image image, syncComputeOnCacheMiss: syncLoadOnCacheMiss, addToQueue: true))
-                    return image;
+                if (mapPreviewCacheManager.Request(map, out CacheLease<Image> lease, syncComputeOnCacheMiss: syncLoadOnCacheMiss, addToQueue: true))
+                    return lease;
                 else
                     return null;
             }
