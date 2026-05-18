@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,5 +148,34 @@ public static class StringExtensions
             length--;
 
         return str.Substring(start, length);
+    }
+
+    /// <summary>
+    /// Truncates this string to at most <paramref name="maxUtf8ByteLength"/> bytes in UTF-8.
+    /// </summary>
+    /// <param name="str">The input string.</param>
+    /// <param name="maxUtf8ByteLength">Maximum UTF-8 byte length allowed for the returned string.</param>
+    /// <returns>The original string if no truncation is needed; otherwise a UTF-8 byte-limited string.</returns>
+    public static string TruncateToUtf8ByteLength(this string str, int maxUtf8ByteLength)
+    {
+        if (str == null)
+            throw new ArgumentNullException(nameof(str));
+        if (maxUtf8ByteLength < 0)
+            throw new ArgumentOutOfRangeException(nameof(maxUtf8ByteLength), $"{nameof(maxUtf8ByteLength)} must be non-negative.");
+        if (str.Length == 0 || maxUtf8ByteLength == 0)
+            return string.Empty;
+
+        if (Encoding.UTF8.GetByteCount(str) <= maxUtf8ByteLength)
+            return str;
+
+        // Encoder.Convert fits as many source chars as possible into the byte budget
+        // without splitting a multi-byte UTF-8 sequence or a surrogate pair.
+        Encoder encoder = Encoding.UTF8.GetEncoder();
+        char[] chars = str.ToCharArray();
+        byte[] buffer = new byte[maxUtf8ByteLength];
+        encoder.Convert(chars, 0, chars.Length, buffer, 0, buffer.Length,
+            flush: true, out int charsUsed, out _, out _);
+
+        return str.Substring(0, charsUsed);
     }
 }
