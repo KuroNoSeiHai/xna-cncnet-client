@@ -35,7 +35,7 @@ namespace DTAClient.Domain.Multiplayer.CnCNet
                     GameBroadcastChannel = "#cncnet-ec-games",
                     InternalName = "ec",
                     RegistryInstallPath = "HKCU\\Software\\EarthCrisis",
-                    UIName = "Earth Crisis".L10N("Client:ClientCore:DawnoftheTiberiumAge")
+                    UIName = "Earth Crisis".L10N("Client:ClientCore:EarthCrisis")
                 }
             };
 
