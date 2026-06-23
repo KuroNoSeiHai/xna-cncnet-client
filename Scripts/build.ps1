@@ -24,13 +24,10 @@
   Do not make folder structure.
 .EXAMPLE
   build.ps1
-  Build for all games.
+  Build.
 .EXAMPLE
-  build.ps1 Ares
-  Build for ares game.
-.EXAMPLE
-  build.ps1 Ares -IsDebug
-  Build for ares game on debug mode.
+  build.ps1 -IsDebug
+  Build on debug mode.
 #>
 param(
   [Parameter()]
@@ -108,13 +105,13 @@ function Script:Invoke-BuildProject {
       # $Private:ArgumentList.Add("-property:FileVersion=$AssemblySemFileVer")
       # $Private:ArgumentList.Add("-property:InformationalVersion=$InformationalVersion")
   
-      if ($Engine -eq 'WindowsXNA') {
-        $Private:ArgumentList.Add('--arch=x86')
-      }
+      # if ($Engine -eq 'WindowsXNA') {
+      #   $Private:ArgumentList.Add('--arch=x86')
+      # }
   
-      & 'dotnet' $Private:ArgumentList  
+      & 'dotnet' $Private:ArgumentList
       if ($LASTEXITCODE) {
-        throw "Build failed for ${Engine}$Script:ConfigurationSuffix $Framework"
+        throw "Build failed for ${Engine}$Script:ConfigurationSuffix $Framework (exit code $LASTEXITCODE)"
       }
     }
     else {
